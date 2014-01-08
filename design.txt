@@ -1,0 +1,86 @@
+1:18
+
+Reader = require 'x'
+
+my_reader = Reader(options)
+
+my_reader.check()
+
+
+
+
+		
+		
+		
+Node Tree ->  Scope tree
+
+You execute the node tree to get the scope tree, in the same way you execute the node tree to get the js
+
+
+class Node
+
+class Scope
+	list of variables
+
+
+Law of simplification:
+	Every variable has a single, given interface, defined as the guarantees
+	we have about how this variable can be used.  Interfaces may be conjunctive -- for instance,
+	"either a string or a number" is a valid interface.
+	
+	We assume that the interface is unknown.  
+	
+	Possible bugs include:	
+	1. We try to use a variable in a way that is incompatible with its interface
+	2. We pass in a value that is not a valid instance of the interface
+
+
+
+A Variable is the use of a name in a scope from an assignment until a subsequent assignment
+or the end of the scope.  ONCE A VARIABLE IS CAPTURED IN A CLOSURE, SUBSEQUENT ASSIGNMENTS CAN'T CREATE
+NEW VARIABLES
+	if-statement assignments still count as new assignments, because the if-statement just modifies
+	how we get the value
+	
+	
+Variable:
+	name: it's name
+	Uses: a list of all the ways we use the variable
+	Interface: if known, the one true interface for a variable.
+		We know this if 
+			A: a comment says so
+			B: other??
+	Assignments:
+		assignments are Expressions
+		
+Expressions: expressions represent progress towards calculating an interface.
+	Interfaces are "pure" -- they don't contain the concept of not-figured out yet...
+	whereas expressions have event-driven chaining that as we gain more information,
+	we update with more information.
+	
+	In other words, expressions contain a PROMISE for an interface.  Might even implement them
+	as promises
+	
+
+		
+Uses:
+	Pass to function 
+	Call
+	New_call
+	Use property: property_name, use
+	
+	
+Interface
+	Literal
+	Function
+	Class-function
+	Object
+	Disjunctive
+	Can implement other Interfaces
+	
+	
+	
+I think at this point I know enough that I can write a first pass thing that reads in a file,
+and outputs the scope tree with everything we know to disk, that we can then read.
+
+	

@@ -70,12 +70,20 @@ class Variable
         string_builder.write 'Variable: ' + @name
         s = string_builder.sub()
         @interface?.print s
-        ass.print s for ass in @assignments
-        use.print s for use in @uses
+        s.write 'assignments:'
+        s1 = s.sub()
+        ass.print s1 for ass in @assignments
+        s.write 'uses:'
+        s2 = s.sub()
+        use.print s2 for use in @uses
+        
+    add_assignment: (node) -> @assignments.push node
         
 
 
 MakeNode = (raw_node) -> 
+    if not raw_node
+        return null
     if not nodes[raw_node.constructor.name]
         throw new Error 'unrecognized node: ' + raw_node.constructor.name
     new nodes[raw_node.constructor.name] raw_node
@@ -89,14 +97,18 @@ class Node
         return scope
         
     children: ->
-        res = []
-        for name in @raw.children
-            res.push MakeNode(n) for n in @raw[name]
-        return res
+        return [].concat (@child name for name in @raw.children)...
+            
+    child: (name) ->
+        if Array.isArray @raw[name]
+            (MakeNode(n) for n in @raw[name])
+        else
+            MakeNode @raw[name]
         
     process: ->
         console.log 'warning: node ' + @constructor.name + ' does not yet have a process(scope) function'
             
+    print: (s) -> s.write @constructor.name
         
 
 nodes = {}
@@ -113,17 +125,42 @@ nodes.Class = class Class extends Node
         name = @raw.determineName()
         v = scope.get name
         
-        console.log 'warning: not done with class!'
+        v.add_assignment this
+        
+        MakeNode(@raw.body).process scope
+        
         
         
 nodes.Comment = class Comment extends Node
+    process: (scope) ->
+        #nothing for now, since we haven't added interfaces yet
         
 nodes.Assign = class Assign extends Node
+    process: (scope) ->
+        name = @child('variable').get_variable_name()
+        v = scope.get name
+        v.add_assignment @child('value')
+        
+        if @raw.context
+            console.log 'warning, assign has context, ignoring: ' + @raw.context
+        if @raw.options
+            console.log 'warning, assign has options, ignoring: ' + @raw.options
+
 
 nodes.Call = class Call extends Node
 
+nodes.Value = class Value extends Node
 
+    #If this value is the assignment target of a variable, gets the name of it...
+    get_variable_name: -> @child('base').get_variable_name()    
+    
+nodes.Code = class Code extends Node
 
+    
+nodes.Literal = class Literal extends Node
+    get_variable_name: -> @raw.value
+    
+    
 
 #The thing:
 scope = nodes_to_scope text_to_node load 'sample.coffee'

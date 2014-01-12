@@ -51,16 +51,8 @@ Variable:
 			A: a comment says so
 			B: other??
 	Assignments:
-		assignments are Expressions
+		assignments are Nodes (because, why have a seperate "expression" class when we've already done the work of building classes for each item?)
 		
-Expressions: expressions represent progress towards calculating an interface.
-	Interfaces are "pure" -- they don't contain the concept of not-figured out yet...
-	whereas expressions have event-driven chaining that as we gain more information,
-	we update with more information.
-	
-	In other words, expressions contain a PROMISE for an interface.  Might even implement them
-	as promises
-	
 
 		
 Uses:

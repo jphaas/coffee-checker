@@ -1,3 +1,5 @@
+#Name: go with a visual metaphor, like xray, vision, whatever?  because it provides clarity and transparency?
+
 fs = require 'fs'
 coffee = require 'coffee-script'
 
